@@ -12,6 +12,7 @@
 #include "globject.h"
 #include "shader.h"
 #include "shaders/solid_color.h"
+#include "assets.h"
 
 Viewer* viewer;
 int running;
@@ -65,7 +66,6 @@ static void close_callback(void* userData) {
 int main() {
     double current, dt, lastTime;
     GLuint shaderSolidColor;
-    struct Mesh cubeMesh;
     struct GLObject cube;
     struct Camera* camera;
     float cubeColor[] = {0.0, 0.0, 1.0, 0.0};
@@ -73,19 +73,23 @@ int main() {
 
     viewer = viewer_new(1024, 768, "Game");
     viewer_set_callbacks(viewer, cursor_callback, wheel_callback, key_callback, close_callback, NULL);
-    running = 1;
-    lastTime = glfwGetTime();
 
-    shaderSolidColor = shader_compile("shaders/solid_color.vert", "shaders/solid_color.frag");
-    mesh_load(&cubeMesh, "models", "cube.obj");
-    globject_new(&cubeMesh, &cube);
+    assets_init();
+    cube = load_model(TETRAPOD);
+    shaderSolidColor = load_shader(SOLID_COLOR);
+
     camera = viewer_get_camera(viewer);
     camera_move(camera, t);
     camera_update_view(camera);
 
+    lastTime = glfwGetTime();
+    running = 1;
     while (running) {
         current = glfwGetTime();
         dt = current - lastTime;
+
+	(void)dt;
+
         lastTime = current;
         viewer_process_events(viewer);
         usleep(10 * 1000);
@@ -94,9 +98,7 @@ int main() {
         draw_solid_color(&cube, shaderSolidColor, camera, cubeModel, cubeColor);
     }
 
-    globject_free(&cube);
-    mesh_free(&cubeMesh);
-    glDeleteProgram(shaderSolidColor);
+    assets_free();
     viewer_free(viewer);
 
     return 0;
