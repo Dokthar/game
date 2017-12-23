@@ -41,7 +41,7 @@ void mesh_load(struct Mesh* mesh, const char* modeldir, const char* filename) {
                                 
                                 if (i < 6*attrib.num_texcoords) {
                                     mesh->texCoords[2*i] = attrib.texcoords[2 * attrib.faces[i].vt_idx];
-                                    mesh->texCoords[2*i + 1] = 1 - attrib.texcoords[2 * attrib.faces[i].vt_idx + 1];
+                                    mesh->texCoords[2*i + 1] = attrib.texcoords[2 * attrib.faces[i].vt_idx + 1];
                                 }
                             }
 
