@@ -150,6 +150,7 @@ void viewer_process_events(struct Viewer* viewer) {
 
 void viewer_next_frame(struct Viewer* viewer) {
     glfwSwapBuffers(viewer->window);
+    glClearColor(0.2258, 0.2258, 0.2258, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
