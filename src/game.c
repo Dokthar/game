@@ -74,7 +74,7 @@ int main() {
     double dt;
     struct Mesh cubeMesh = {0};
     struct GLObject cubeGl = {0};
-    struct SolidColorGeometry cube = {0};
+    struct Geometry cube = {0};
     struct SolidTextureGeometry texturedCube = {0};
 
     viewer = viewer_new(1024, 768, "Game");
@@ -96,7 +96,7 @@ int main() {
         usleep(10 * 1000);
 
         dt = viewer_next_frame(viewer);
-        geometry_render(&cube.geometry, &viewer->camera);
+        geometry_render(&cube, &viewer->camera);
         geometry_render(&texturedCube.geometry, &viewer->camera);
     }
 

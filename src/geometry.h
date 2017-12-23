@@ -11,6 +11,7 @@ struct Geometry {
     GLuint shader;
     struct GLObject glObject;
     void (*render)(const struct Geometry*);
+    void *priv_data;
 };
 
 void geometry_render(const struct Geometry* geometry, const struct Camera* camera);
