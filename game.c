@@ -11,8 +11,8 @@
 #include "globject.h"
 #include "texture.h"
 #include "node.h"
-#include "geometry/solid_color.h"
-#include "geometry/solid_texture.h"
+#include "material/solid_color.h"
+#include "material/solid_texture.h"
 #include "mesh/obj.h"
 
 struct Viewer* viewer;
@@ -94,29 +94,34 @@ int main() {
     double dt;
     struct Mesh cubeMesh = {0};
     struct GLObject cubeGl = {0};
-    struct SolidColorGeometry cube = {0};
-    struct SolidTextureGeometry texturedCube = {0};
-    struct Node scene, cube1, cube2;
+    struct SolidColorMaterial solidcolor = {0};
+    struct SolidTextureMaterial textured = {0};
+    struct Node scene;
+    struct Geometry geom1, geom2;
+    struct Node cube1, cube2;
 
     viewer = viewer_new(1024, 768, "Game");
     viewer->cursor_callback = cursor_rotate_around_origin;
     viewer->wheel_callback = wheel_callback;
     viewer->key_callback = key_callback;
     viewer->close_callback = close_callback;
-    obj_mesh(&cubeMesh, "models/cube.obj", 0, 0, 1);
-    running = 1;
 
+    obj_mesh(&cubeMesh, "models/cube.obj", 0, 0, 1);
     globject_new(&cubeMesh, &cubeGl);
 
-    solid_color_geometry(&cube, &cubeGl, 0.0, 0.0, 1.0);
-    solid_texture_geometry(&texturedCube, &cubeGl, texture_load_from_file("textures/tux.png"));
+    solid_color_material(&solidcolor, 0.0, 0.0, 1.0);
+    solid_texture_material(&textured, texture_load_from_file("textures/tux.png"));
+    geom1.glObject = cubeGl;
+    geom1.material = &solidcolor;
+    geom2.glObject = cubeGl;
+    geom2.material = &textured;
 
     node_init(&scene);
     node_init(&cube1);
     node_init(&cube2);
 
-    cube1.geometry = &cube.geometry;
-    cube2.geometry = &texturedCube.geometry;
+    cube1.geometry = &geom1;
+    cube2.geometry = &geom2;
     cube2.transform[3][1] = 3.0;
     scene.transform[3][0] = 4.0;
 
@@ -125,6 +130,7 @@ int main() {
 
     viewer->callbackData = cube1.transform;
 
+    running = 1;
     while (running) {
         viewer_process_events(viewer);
         usleep(10 * 1000);
