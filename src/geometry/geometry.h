@@ -3,12 +3,13 @@
 #include "camera.h"
 #include "globject.h"
 #include "material/material.h"
+#include "mesh/mesh.h"
 
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
 struct Geometry {
-    struct GLObject glObject;
+    struct Mesh *mesh;
     struct Material *material;
 };
 

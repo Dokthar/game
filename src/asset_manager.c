@@ -8,8 +8,6 @@
 #define DEBUG
 #include "debug.h"
 
-struct GLObject models[NB_MODELS + 1] = {0};
-
 struct Mesh meshs[NB_MODELS + 1] = {0};
 
 GLuint textures[NB_TEXTURES + 1] = {0};
@@ -17,9 +15,9 @@ GLuint textures[NB_TEXTURES + 1] = {0};
 GLuint shaders[NB_SHADERS + 1] = {0};
 
 
-struct GLObject load_model(enum Model key)
+struct Mesh *load_model(enum Model key)
 {
-    return models[key];
+    return &meshs[key];
 }
 
 GLuint load_texture(enum Texture key)
@@ -43,7 +41,7 @@ int models_init()
 
         obj_mesh(&meshs[i], key->path, key->withIndices,
               key->withNormals, key->withTexCoords);
-        globject_new(&meshs[i], &models[i]);
+        mesh_load(&meshs[i]);
     }
     dbg_printf("models init: [%d/%1$d] ... DONE\n", NB_MODELS);
 
@@ -118,7 +116,7 @@ void assets_free()
     unsigned int i;
 
     for (i = 0; i < NB_MODELS; i++) {
-        globject_free(&models[i]);
+        mesh_unload(&meshs[i]);
         mesh_free(&meshs[i]);
     }
 

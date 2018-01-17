@@ -93,7 +93,6 @@ static void close_callback(void* userData) {
 int main() {
     double dt;
     struct Mesh cubeMesh = {0};
-    struct GLObject cubeGl = {0};
     struct SolidColorMaterial solidcolor = {0};
     struct SolidTextureMaterial textured = {0};
     struct Node scene;
@@ -107,13 +106,13 @@ int main() {
     viewer->close_callback = close_callback;
 
     obj_mesh(&cubeMesh, "models/cube.obj", 0, 0, 1);
-    globject_new(&cubeMesh, &cubeGl);
+    mesh_load(&cubeMesh);
 
     solid_color_material(&solidcolor, 0.0, 0.0, 1.0);
     solid_texture_material(&textured, texture_load_from_file("textures/tux.png"));
-    geom1.glObject = cubeGl;
+    geom1.mesh = &cubeMesh;
     geom1.material = &solidcolor;
-    geom2.glObject = cubeGl;
+    geom2.mesh = &cubeMesh;
     geom2.material = &textured;
 
     node_init(&scene);
@@ -140,8 +139,8 @@ int main() {
     }
 
     solid_color_shader_free();
+    mesh_unload(&cubeMesh);
     mesh_free(&cubeMesh);
-    globject_free(&cubeGl);
     viewer_free(viewer);
     graph_free(&scene);
 
