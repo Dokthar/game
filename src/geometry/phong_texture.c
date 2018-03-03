@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "phong_texture.h"
-#include "shader.h"
+#include "shader/shader.h"
 
 static GLuint shader = 0;
 

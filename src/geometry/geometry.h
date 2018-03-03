@@ -1,7 +1,7 @@
 #include <GL/glew.h>
-#include "linear_algebra.h"
-#include "globject.h"
-#include "camera.h"
+#include "math/linear_algebra.h"
+#include "mesh/globject.h"
+#include "render/camera.h"
 #include "light/light.h"
 
 #ifndef GEOMETRY_H

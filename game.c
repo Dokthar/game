@@ -6,20 +6,20 @@
 #include <GLFW/glfw3.h>
 #include <unistd.h>
 
-#include "viewer.h"
-#include "camera.h"
-#include "globject.h"
-#include "texture.h"
-#include "scene.h"
+#include "render/viewer.h"
+#include "render/camera.h"
+#include "mesh/globject.h"
+#include "texture/texture.h"
+#include "scene/scene.h"
 #include "geometry/solid_color.h"
 #include "geometry/solid_texture.h"
 #include "geometry/phong_color.h"
 #include "geometry/phong_texture.h"
-#include "mesh/obj.h"
+#include "loader/obj.h"
 #include "mesh/box.h"
 #include "mesh/icosphere.h"
 #include "test/scenes_basic.h"
-#include "test/color_util.h"
+#include "math/color_util.h"
 
 struct Viewer* viewer;
 int running;

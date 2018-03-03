@@ -1,4 +1,4 @@
-#include "geometry.h"
+#include "geometry/geometry.h"
 
 void geometry_render(const struct Geometry* geometry, const struct Camera* camera, const struct Lights* lights, Mat4 model, Mat3 inverseNormal) {
     glUseProgram(geometry->shader);

@@ -1,6 +1,6 @@
 #include "text.h"
 
-#include "linear_algebra.h"
+#include "math/linear_algebra.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glew.h>

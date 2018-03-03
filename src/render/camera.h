@@ -1,5 +1,5 @@
-#include "linear_algebra.h"
-#include "quaternion.h"
+#include "math/linear_algebra.h"
+#include "math/quaternion.h"
 
 #ifndef CAMERA_H
 #define CAMERA_H

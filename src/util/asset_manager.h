@@ -2,8 +2,7 @@
 #define ASSET_MANAGER_H
 
 #include <GL/glew.h>
-#include "globject.h"
-
+#include "mesh/globject.h"
 #include "assets.h"
 
 GLuint load_texture(enum Texture key);

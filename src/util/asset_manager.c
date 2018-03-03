@@ -2,9 +2,9 @@
 #include <stdlib.h>
 
 #include "asset_manager.h"
-#include "mesh/obj.h"
-#include "shader.h"
-#include "texture.h"
+#include "loader/obj.h"
+#include "shader/shader.h"
+#include "texture/texture.h"
 #define DEBUG
 #include "debug.h"
 

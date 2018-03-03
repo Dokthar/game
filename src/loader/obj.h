@@ -1,4 +1,4 @@
-#include "mesh.h"
+#include "mesh/mesh.h"
 
 #ifndef OBJ_H
 #define OBJ_H

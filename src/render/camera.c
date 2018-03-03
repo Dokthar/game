@@ -1,7 +1,7 @@
 #include <string.h>
 #include <math.h>
-#include "linear_algebra.h"
-#include "quaternion.h"
+#include "math/linear_algebra.h"
+#include "math/quaternion.h"
 #include "camera.h"
 
 static void camera_update_position(struct Camera* camera) {

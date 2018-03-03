@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "solid_color.h"
-#include "shader.h"
+#include "shader/shader.h"
 
 static GLuint shader = 0;
 
