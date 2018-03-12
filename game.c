@@ -20,6 +20,7 @@
 #include "mesh/icosphere.h"
 #include "test/scenes_basic.h"
 #include "test/color_util.h"
+#include "asset_manager.h"
 
 struct Viewer* viewer;
 int running;
@@ -104,6 +105,8 @@ static void close_callback(void* userData) {
     running = 0;
 }
 
+const char* ASSETS_PATH[] = {"test/assets/", "./", 0};
+
 int main() {
     double t = 0.0, dt;
     struct Mesh cubeMesh = {0}, boxMesh = {0}, icosphereMesh = {0};
@@ -117,6 +120,8 @@ int main() {
         {1.0, 1.0, 1.0},
         1.0
     };
+
+    init_asset_manager(ASSETS_PATH);
 
     viewer = viewer_new(1024, 768, "Game");
     viewer->cursor_callback = cursor_rotate_object;
@@ -137,7 +142,7 @@ int main() {
 
     sphere = solid_color_geometry_shared(&icosphereGl, &sphereMat);
     coloredBox = phong_color_geometry(&boxGl, 1.0, 1.0, 1.0, &cubeMat);
-    texturedCube = phong_texture_geometry(&cubeGl, texture_load_from_file("test/assets/rgb_tux.png"), &cubeMat);
+    texturedCube = phong_texture_geometry(&cubeGl, texture_load_from_file("rgb_tux.png"), &cubeMat);
 
     scene_init(&scene);
     spheres_and_boxes(sphere, texturedCube, &scene.root);

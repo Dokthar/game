@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <png.h>
+#include "asset_manager.h"
 
 int png_read(const char* filename, unsigned int alignRows, unsigned int* width, unsigned int* height, int* alpha, void* buffer) {
     int y, nbBytes;
@@ -13,7 +14,7 @@ int png_read(const char* filename, unsigned int alignRows, unsigned int* width, 
     png_infop info_ptr = NULL;
     png_byte** output = buffer;
 
-    if ((in = fopen(filename, "rb"))) {
+    if ((in = fopen_asset(filename, "rb"))) {
         nbBytes = fread(header, 1, 8, in);
         if (!png_sig_cmp(header, 0, nbBytes)) {
             if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL))) {

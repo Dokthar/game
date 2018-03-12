@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <GL/glew.h>
+#include "asset_manager.h"
 
 #define MAX_INCLUDE_DEPTH 16
 
@@ -75,7 +76,7 @@ static GLuint compile(const char* path, GLenum type) {
     FILE* source[MAX_INCLUDE_DEPTH];
     int i, currentSource = 0, ok = 1;
 
-    if (!(source[0] = fopen(path, "r"))) {
+    if (!(source[0] = fopen_asset(path, "r"))) {
         fprintf(stderr, "Error: failed to open '%s'\n", path);
         return 0;
     }
@@ -104,7 +105,7 @@ static GLuint compile(const char* path, GLenum type) {
                         currentSource++;
                         memcpy(currentPath[currentSource], currentPath[currentSource - 1], directorySize);
                         memcpy(currentPath[currentSource] + directorySize, start, end - start + 1);
-                        if ((source[currentSource] = fopen(currentPath[currentSource], "r"))) {
+                        if ((source[currentSource] = fopen_asset(currentPath[currentSource], "r"))) {
                             ok = 1;
                         } else {
                             fprintf(stderr, "Error: failed to open included shader '%s'\n\tin %s\n", currentPath[currentSource], currentPath[currentSource - 1]);

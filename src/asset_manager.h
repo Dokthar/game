@@ -1,19 +1,16 @@
 #ifndef ASSET_MANAGER_H
 #define ASSET_MANAGER_H
 
-#include <GL/glew.h>
-#include "globject.h"
+#include <stdio.h>
 
-#include "assets.h"
+struct Asset_Manager {
+    const char** assets_path;
+};
 
-GLuint load_texture(enum Texture key);
+void init_asset_manager(const char* path[]);
 
-GLuint load_shader(enum Shader key);
+FILE* fopen_asset(const char* asset, const char* mode);
 
-struct GLObject load_model(enum Model key);
-
-int assets_init();
-
-void assets_free();
+struct Asset_Manager* new_asset_manager(const char* path[], struct Asset_Manager* am);
 
 #endif
