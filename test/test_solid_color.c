@@ -5,7 +5,7 @@
 #include "asset_manager.h"
 #include "globject.h"
 #include "mesh/box.h"
-#include "geometry/solid_color.h"
+#include "material/solid_color.h"
 
 int main(int argc, char** argv) {
     struct Viewer* viewer = NULL;

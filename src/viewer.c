@@ -5,7 +5,7 @@
 
 #include "viewer.h"
 #include "img/png.h"
-#include "geometry/shaders.h"
+#include "material/shaders.h"
 
 struct ViewerImpl {
     struct Viewer user;

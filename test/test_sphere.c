@@ -8,7 +8,7 @@
 #include "linear_algebra.h"
 #include "mesh/icosphere.h"
 #include "mesh/sphere_uv.h"
-#include "geometry/solid_texture.h"
+#include "material/solid_texture.h"
 #include "test/util/callbacks.h"
 
 static const struct EarthTexture {

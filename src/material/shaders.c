@@ -6,7 +6,7 @@
 
 #include "asset_manager.h"
 #include "shader.h"
-#include "geometry/shaders.h"
+#include "material/shaders.h"
 
 struct ShaderFilename {
     const char* vertexShaderFilename;
