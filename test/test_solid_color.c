@@ -12,7 +12,8 @@ int main(int argc, char** argv) {
     struct Scene scene;
     struct Mesh cube = {0};
     struct GLObject cubeGl = {0};
-    struct Geometry* geom = NULL;
+    struct SolidColorMaterial solidcolor = {0};
+    struct Geometry geom = {0};
     double size;
     int ret = 1;
 
@@ -29,25 +30,25 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Error: failed to create cube\n");
     } else {
         globject_new(&cube, &cubeGl);
-        if (!(geom = solid_color_geometry(&cubeGl, 1.0, 0.0, 1.0))) {
-            fprintf(stderr, "Error: failed to create geometry\n");
+        solid_color_material_init(&solidcolor);
+        solid_color_material_set_color(&solidcolor, 1.0, 0.0, 1.0);
+        geom.glObject = cubeGl;
+        geom.material = (struct Material*) &solidcolor;
+
+        scene_init(&scene);
+        scene.root.geometry = &geom;
+
+        viewer_next_frame(viewer);
+        scene_render(&scene, &viewer->camera);
+
+        if (viewer_screenshot(viewer, argv[2])) {
+            ret = 0;
         } else {
-            scene_init(&scene);
-            scene.root.geometry = geom;
-
-            viewer_next_frame(viewer);
-            scene_render(&scene, &viewer->camera);
-
-            if (viewer_screenshot(viewer, argv[2])) {
-                ret = 0;
-            } else {
-                fprintf(stderr, "Error: failed to take screenshot\n");
-            }
-            scene_free(&scene);
+            fprintf(stderr, "Error: failed to take screenshot\n");
         }
+        scene_free(&scene);
     }
 
-    free(geom);
     globject_free(&cubeGl);
     mesh_free(&cube);
     viewer_free(viewer);

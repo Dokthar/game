@@ -5,7 +5,7 @@
 #include "mesh/icosphere.h"
 #include "linear_algebra.h"
 
-struct Node *box_surface(struct Geometry* mat, float size, int slen, float spacing) {
+struct Node *box_surface(struct Material* mat, float size, int slen, float spacing) {
     struct Node *root;
     struct Mesh mesh;
     struct Geometry *g;
@@ -18,7 +18,7 @@ struct Node *box_surface(struct Geometry* mat, float size, int slen, float spaci
         return NULL;
     }
 
-    *g = *mat;
+    g->material = mat;
 
     make_box(&mesh, size, size, size);
     globject_new(&mesh, &g->glObject);
@@ -32,7 +32,7 @@ struct Node *box_surface(struct Geometry* mat, float size, int slen, float spaci
     return root;
 }
 
-struct Node *sphere_surface(struct Geometry* mat, float radius, int slen, float spacing) {
+struct Node *sphere_surface(struct Material* mat, float radius, int slen, float spacing) {
     struct Node *root;
     struct Mesh mesh;
     struct Geometry *g;
@@ -45,7 +45,7 @@ struct Node *sphere_surface(struct Geometry* mat, float radius, int slen, float 
         return NULL;
     }
 
-    *g = *mat;
+    g->material = mat;
 
     make_icosphere(&mesh, radius, 2);
     globject_new(&mesh, &g->glObject);
@@ -59,7 +59,7 @@ struct Node *sphere_surface(struct Geometry* mat, float radius, int slen, float 
     return root;
 }
 
-void spheres_and_boxes(struct Geometry* smat, struct Geometry* bmat, struct Node* root) {
+void spheres_and_boxes(struct Material* smat, struct Material* bmat, struct Node* root) {
     struct Node *spheres, *boxes;
 
     if ((boxes = box_surface(bmat, 1, 10, 2))) {

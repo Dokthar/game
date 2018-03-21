@@ -14,13 +14,18 @@
 #include "asset_manager.h"
 #include "test/util/callbacks.h"
 
-static void text_prerender(const struct Geometry* geometry, const struct Camera* camera, const struct Lights* lights) {
-    static const float color[3] = {1,1,1};
-    glUniform3fv(glGetUniformLocation(geometry->shader, "textColor"), 1, color);
-    glBindTexture(GL_TEXTURE_2D, ((struct BitmapFont *)geometry->material)->texture_atlas);
+struct TextMaterial {
+    struct Material mat;
+    Vec3 color;
+    GLuint texture;
+};
+
+static void text_prerender(const struct Material* mat, const struct Camera* camera, const struct Lights* lights) {
+    glUniform3fv(glGetUniformLocation(mat->shader, "textColor"), 1, ((struct TextMaterial*) mat)->color);
+    glBindTexture(GL_TEXTURE_2D, ((struct TextMaterial*) mat)->texture);
 }
 
-static void text_postrender(const struct Geometry* geometry, const struct Camera* camera, const struct Lights* lights) {
+static void text_postrender(const struct Material* mat, const struct Camera* camera, const struct Lights* lights) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -32,7 +37,7 @@ int run(const char* text) {
     struct GLObject text_gl;
     struct Geometry text_geom;
     struct Node text_node;
-    GLuint text_shader;
+    struct TextMaterial text_mat = {0};
     char* ttf;
     int err;
 
@@ -61,22 +66,24 @@ int run(const char* text) {
         fprintf(stderr, "Failed to initialise font\n");
         return 1;
     }
-
     err = new_text(font, text, &text_mesh);
     if (err) {
         fprintf(stderr, "Failed to create text mesh\n");
         return err;
     }
+
     globject_new(&text_mesh, &text_gl);
-    /* create geometry by hand */
-    text_shader = asset_manager_load_shader("shaders/text.vert", "shaders/text.frag");
+    text_mat.mat.shader = asset_manager_load_shader("shaders/text.vert", "shaders/text.frag");
+    text_mat.mat.mode = GL_FILL;
+    text_mat.mat.prerender = text_prerender;
+    text_mat.mat.postrender = text_postrender;
+    text_mat.color[0] = 1;
+    text_mat.color[1] = 1;
+    text_mat.color[2] = 1;
+    text_mat.texture = font->texture_atlas;
 
     text_geom.glObject = text_gl;
-    text_geom.shader = text_shader;
-    text_geom.mode = GL_FILL;
-    text_geom.material = (void*) font;
-    text_geom.prerender = text_prerender;
-    text_geom.postrender = text_postrender;
+    text_geom.material = &text_mat.mat;
 
     node_init(&text_node, &text_geom);
     scene_add(&scene, &text_node);

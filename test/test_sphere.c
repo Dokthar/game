@@ -28,7 +28,8 @@ int main(int argc, char** argv) {
     struct Scene scene;
     struct Mesh sphere = {0};
     struct GLObject sphereGl = {0};
-    struct Geometry* geom = NULL;
+    struct SolidTextureMaterial solidtexture = {0};
+    struct Geometry geom = {0};
     int ret = 1;
 
     asset_manager_add_path(".");
@@ -44,31 +45,31 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Error: failed to compute UVs\n");
     } else {
         globject_new(&sphere, &sphereGl);
-        if (!(geom = solid_texture_geometry(&sphereGl, asset_manager_load_texture(texture[type].path)))) {
-            fprintf(stderr, "Error: failed to create geometry\n");
-        } else {
-            scene_init(&scene);
-            scene.root.geometry = geom;
-            node_rotate(&scene.root, VEC3_AXIS_X, -M_PI / 2.0);
-            viewer->close_callback = close_callback;
-            viewer->wheel_callback = wheel_callback;
-            viewer->cursor_callback = cursor_rotate_object;
-            viewer->callbackData = &scene.root;
+        solid_texture_material_init(&solidtexture);
+        solidtexture.texture = asset_manager_load_texture(texture[type].path);
+        geom.material = (struct Material*) &solidtexture;
+        geom.glObject = sphereGl;
 
-            running = 1;
-            while (running) {
-                usleep(10 * 1000);
-                viewer_process_events(viewer);
-                viewer_next_frame(viewer);
-                scene_render(&scene, &viewer->camera);
-            }
-            ret = 0;
+        scene_init(&scene);
+        scene.root.geometry = &geom;
+        node_rotate(&scene.root, VEC3_AXIS_X, -M_PI / 2.0);
+        viewer->close_callback = close_callback;
+        viewer->wheel_callback = wheel_callback;
+        viewer->cursor_callback = cursor_rotate_object;
+        viewer->callbackData = &scene.root;
 
-            scene_free(&scene);
+        running = 1;
+        while (running) {
+            usleep(10 * 1000);
+            viewer_process_events(viewer);
+            viewer_next_frame(viewer);
+            scene_render(&scene, &viewer->camera);
         }
+        ret = 0;
+
+        scene_free(&scene);
     }
 
-    free(geom);
     globject_free(&sphereGl);
     mesh_free(&sphere);
     viewer_free(viewer);

@@ -24,14 +24,14 @@
 int run() {
     struct Viewer* viewer;
     struct Scene scene;
-    struct GLObject bloat = {0};
-    struct Geometry *mat_checkerboard;
-    struct Geometry *mat_solidcolor;
-    struct PhongMaterial phong = {
+    struct PhongTextureMaterial mat_checkerboard;
+    struct PhongColorMaterial mat_solidcolor = {
+        {0},
+        {0.0, 1.0, 0.0},{
         {1.0, 1.0, 1.0},
         {1.0, 1.0, 1.0},
         {1.0, 1.0, 1.0},
-        1.0
+        1.0}
     };
 
     asset_manager_add_path(".");
@@ -42,14 +42,15 @@ int run() {
     viewer->close_callback = close_callback;
     running = 1;
 
-    mat_checkerboard = phong_texture_geometry(&bloat, default_checkerboard(), &phong);
-    mat_solidcolor = phong_color_geometry(&bloat, 0, 1.0, 0, &phong);
+    phong_texture_material_init(&mat_checkerboard);
+    mat_checkerboard.phong = mat_solidcolor.phong;
+    phong_color_material_init(&mat_solidcolor);
 
     scene_init(&scene);
     scene.lights.numLocal = 1;
     test_init_local_light(&scene.lights.local[0]);
 
-    spheres_and_boxes(mat_solidcolor, mat_checkerboard, &scene.root);
+    spheres_and_boxes(&mat_solidcolor.mat, &mat_checkerboard.mat, &scene.root);
     node_rotate(&scene.root, (void *)VEC3_AXIS_X, M_PI / 2.0);
 
     viewer->callbackData = &scene.root;
@@ -61,8 +62,6 @@ int run() {
         scene_render(&scene, &viewer->camera);
     }
 
-    free(mat_checkerboard);
-    free(mat_solidcolor);
     viewer_free(viewer);
     scene_free(&scene);
 

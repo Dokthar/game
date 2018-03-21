@@ -1,15 +1,15 @@
-#include "geometry.h"
-#include "../light/phong.h"
+#include "material/material.h"
+#include "light/phong.h"
 
 #ifndef PHONG_COLOR_H
 #define PHONG_COLOR_H
 
 struct PhongColorMaterial {
+    struct Material mat;
     Vec3 color;
     struct PhongMaterial phong;
 };
 
-struct Geometry* phong_color_geometry(const struct GLObject* glObject, float r, float g, float b, const struct PhongMaterial* phong);
-struct Geometry* phong_color_geometry_shared(const struct GLObject* glObject, struct PhongColorMaterial* material);
+void phong_color_material_init(struct PhongColorMaterial* material);
 
 #endif
