@@ -16,18 +16,9 @@
 
 struct TextMaterial {
     struct Material mat;
-    Vec3 color;
-    GLuint texture;
+    struct Matparam color;
+    struct Matparam texture;
 };
-
-static void text_prerender(const struct Material* mat, const struct Camera* camera, const struct Lights* lights) {
-    glUniform3fv(glGetUniformLocation(mat->shader, "textColor"), 1, ((struct TextMaterial*) mat)->color);
-    glBindTexture(GL_TEXTURE_2D, ((struct TextMaterial*) mat)->texture);
-}
-
-static void text_postrender(const struct Material* mat, const struct Camera* camera, const struct Lights* lights) {
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
 
 int run(const char* text) {
     struct Viewer *viewer;
@@ -73,14 +64,12 @@ int run(const char* text) {
     }
 
     globject_new(&text_mesh, &text_gl);
+    material_init(&text_mat.mat, "text", 2, &text_mat.color);
     text_mat.mat.shader = asset_manager_load_shader("shaders/text.vert", "shaders/text.frag");
-    text_mat.mat.mode = GL_FILL;
-    text_mat.mat.prerender = text_prerender;
-    text_mat.mat.postrender = text_postrender;
-    text_mat.color[0] = 1;
-    text_mat.color[1] = 1;
-    text_mat.color[2] = 1;
-    text_mat.texture = font->texture_atlas;
+    text_mat.color.name = "textColor";
+    material_set_color(&text_mat.mat, "textColor", 1, 1, 1);
+    text_mat.texture.name = "tex";
+    material_set_texture(&text_mat.mat, "tex", font->texture_atlas);
 
     text_geom.glObject = text_gl;
     text_geom.material = &text_mat.mat;
