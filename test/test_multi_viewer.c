@@ -74,7 +74,7 @@ int main() {
     viewer_make_current(viewer2);
     cube2.glObject = cubeGl2;
     solid_texture_material_init(&solidTex);
-    solidTex.texture = asset_manager_load_texture("png/rgb_tux.png");
+    matparam_set_texture(&(solidTex.texture), asset_manager_load_texture("png/rgb_tux.png"));
     cube2.material = &solidTex.mat;
 
     viewer_make_current(viewer);

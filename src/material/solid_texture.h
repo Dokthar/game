@@ -6,9 +6,9 @@
 
 struct SolidTextureMaterial {
     struct Material mat;
-    GLuint texture;
+    struct Matparam texture;
 };
 
-void solid_texture_material_init(struct SolidTextureMaterial* material);
+void solid_texture_material_init(struct SolidTextureMaterial* solidtexture);
 
 #endif

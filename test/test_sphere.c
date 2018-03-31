@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     } else {
         globject_new(&sphere, &sphereGl);
         solid_texture_material_init(&solidtexture);
-        solidtexture.texture = asset_manager_load_texture(texture[type].path);
+        matparam_set_texture(&(solidtexture.texture), asset_manager_load_texture(texture[type].path));
         geom.material = (struct Material*) &solidtexture;
         geom.glObject = sphereGl;
 
