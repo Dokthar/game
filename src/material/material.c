@@ -20,10 +20,6 @@ void material_prerender(const struct Material *mat, const struct Camera *cam, co
     for (i = 0; i < mat->nb_params; i++) {
         param = mat->params[i];
         location = glGetUniformLocation(mat->shader, param.name);
-        if (location < 0 && param.type != TEXTURE) {
-            fprintf(stderr, "Warning: no uniform '%s' found for shader %s\n", param.name, mat->name);
-            continue;
-        }
         switch (param.type) {
         case INT:
             glUniform1i(location, param.value._int);
