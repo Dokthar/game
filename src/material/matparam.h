@@ -27,4 +27,8 @@ struct Matparam {
     } value;
 };
 
+void matparam_set_color_rgb(struct Matparam* param, float r, float g, float b);
+
+void matparam_set_texture(struct Matparam* param, GLuint texture);
+
 #endif
