@@ -5,7 +5,7 @@
 
 struct SolidColorMaterial {
     struct Material mat;
-    Vec3 color;
+    struct Matparam color;
 };
 
 void solid_color_material_init(struct SolidColorMaterial* material);
