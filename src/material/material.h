@@ -10,8 +10,6 @@ struct Material {
     const char* name;
     GLuint shader;
     GLuint mode;
-    void (*prerender)(const struct Material*, const struct Camera*, const struct Lights*);
-    void (*postrender)(const struct Material*, const struct Camera*, const struct Lights*);
     unsigned int nb_params;
     struct Matparam* params;
 };

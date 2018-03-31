@@ -5,8 +5,6 @@
 void material_init(struct Material* mat, const char* name, unsigned int nb_params, struct Matparam *params) {
     mat->name = name;
     mat->shader = 0;
-    mat->prerender = material_prerender;
-    mat->postrender = material_postrender;
     mat->mode = GL_FILL;
     mat->nb_params = nb_params;
     mat->params = params;
