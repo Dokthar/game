@@ -27,6 +27,12 @@ struct Matparam {
     } value;
 };
 
+void matparam_set_int(struct Matparam* param, int i);
+
+void matparam_set_float(struct Matparam* param, float f);
+
+void matparam_set_color_vec3(struct Matparam* param, Vec3 rgb);
+
 void matparam_set_color_rgb(struct Matparam* param, float r, float g, float b);
 
 void matparam_set_texture(struct Matparam* param, GLuint texture);
