@@ -10,8 +10,4 @@ struct PhongMaterial {
     float shininess;
 };
 
-#ifndef GLSL
-void phong_load_material_uniform(GLuint shader, const struct PhongMaterial* material);
-#endif
-
 #endif

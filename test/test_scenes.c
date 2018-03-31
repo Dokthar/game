@@ -25,14 +25,7 @@ int run() {
     struct Viewer* viewer;
     struct Scene scene;
     struct PhongTextureMaterial mat_checkerboard;
-    struct PhongColorMaterial mat_solidcolor = {
-        {0},
-        {0.0, 1.0, 0.0},{
-        {1.0, 1.0, 1.0},
-        {1.0, 1.0, 1.0},
-        {1.0, 1.0, 1.0},
-        1.0}
-    };
+    struct PhongColorMaterial mat_solidcolor;
 
     asset_manager_add_path(".");
     asset_manager_add_path("..");
@@ -43,8 +36,9 @@ int run() {
     running = 1;
 
     phong_texture_material_init(&mat_checkerboard);
-    mat_checkerboard.phong = mat_solidcolor.phong;
+    mat_checkerboard.texture.value._texture = default_checkerboard();
     phong_color_material_init(&mat_solidcolor);
+    material_set_color(&mat_solidcolor.mat, "color", 0, 1, 0);
 
     scene_init(&scene);
     scene.lights.numLocal = 1;

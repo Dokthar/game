@@ -6,8 +6,11 @@
 
 struct PhongTextureMaterial {
     struct Material mat;
-    GLuint texture;
-    struct PhongMaterial phong;
+    struct Matparam ambient;
+    struct Matparam diffuse;
+    struct Matparam specular;
+    struct Matparam shininess;
+    struct Matparam texture;
 };
 
 void phong_texture_material_init(struct PhongTextureMaterial* material);

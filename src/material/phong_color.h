@@ -6,8 +6,11 @@
 
 struct PhongColorMaterial {
     struct Material mat;
-    Vec3 color;
-    struct PhongMaterial phong;
+    struct Matparam ambient;
+    struct Matparam diffuse;
+    struct Matparam specular;
+    struct Matparam shininess;
+    struct Matparam color;
 };
 
 void phong_color_material_init(struct PhongColorMaterial* material);

@@ -5,18 +5,18 @@ uniform int nbDirectionalLights;
 uniform int nbLocalLights;
 uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform LocalLight localLights[MAX_LOCAL_LIGHTS];
-uniform PhongMaterial material;
+uniform PhongMaterial phong;
 
 vec3 phong_compute_directional_light(DirectionalLight light, vec3 surfelToCamera, vec3 surfelNormal) {
     vec3 surfelToLight = -light.direction;
 
     float diffuseFactor = max(dot(surfelToLight, surfelNormal), 0.0);
     vec3 reflectDirection = reflect(surfelToLight, surfelNormal);
-    float specularFactor = pow(max(dot(surfelToCamera, reflectDirection), 0.0), material.shininess);
+    float specularFactor = pow(max(dot(surfelToCamera, reflectDirection), 0.0), phong.shininess);
 
-    vec3 ambient = light.ambient * material.ambient;
-    vec3 diffuse = diffuseFactor * light.diffuse * material.diffuse;
-    vec3 specular = specularFactor * light.specular * material.specular;
+    vec3 ambient = light.ambient * phong.ambient;
+    vec3 diffuse = diffuseFactor * light.diffuse * phong.diffuse;
+    vec3 specular = specularFactor * light.specular * phong.specular;
 
     return (ambient + diffuse + specular);
 }
@@ -30,15 +30,15 @@ vec3 phong_compute_local_light(LocalLight light, vec3 surfelToCamera, vec3 surfe
 
     // Specular shading
     vec3 reflectDirection = reflect(-surfelToLight, surfelNormal);
-    float specularFactor = (dot(surfelNormal, surfelToLight) > 0) ? pow(max(dot(surfelToCamera, reflectDirection), 0.0), material.shininess) : 0;
+    float specularFactor = (dot(surfelNormal, surfelToLight) > 0) ? pow(max(dot(surfelToCamera, reflectDirection), 0.0), phong.shininess) : 0;
 
     float t = light.decay * distance;
     float attenuation = light.intensity / (1 + t + t * t / 2 + t * t * t / 6);
 
     // Combine results
-    vec3 ambient  = attenuation *                  light.ambient  * material.ambient ;
-    vec3 diffuse  = attenuation * diffuseFactor  * light.diffuse  * material.diffuse ;
-    vec3 specular = attenuation * specularFactor * light.specular * material.specular;
+    vec3 ambient  = attenuation *                  light.ambient  * phong.ambient ;
+    vec3 diffuse  = attenuation * diffuseFactor  * light.diffuse  * phong.diffuse ;
+    vec3 specular = attenuation * specularFactor * light.specular * phong.specular;
 
     return (ambient + diffuse + specular);
 }

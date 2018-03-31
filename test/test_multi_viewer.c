@@ -32,14 +32,8 @@ int main() {
     struct Geometry cube2 = {0};
     struct Scene scene, scene2;
     struct Node nodeCube;
-    struct PhongColorMaterial sphereMat = {
-        {0},
-        {0,0,0},{
-        {1.0, 1.0, 1.0},
-        {1.0, 1.0, 1.0},
-        {1.0, 1.0, 1.0},
-        1.0}
-    };
+    Vec3 color = {0};
+    struct PhongColorMaterial sphereMat;
     struct PhongTextureMaterial textureMat;
     struct SolidTextureMaterial solidTex;
 
@@ -68,8 +62,7 @@ int main() {
     viewer_make_current(viewer);
     phong_color_material_init(&sphereMat);
     phong_texture_material_init(&textureMat);
-    textureMat.phong = sphereMat.phong;
-    textureMat.texture = asset_manager_load_texture("png/rgb_tux.png");
+    material_set_texture(&textureMat.mat, "tex", asset_manager_load_texture("png/rgb_tux.png"));
 
     viewer_make_current(viewer2);
     cube2.glObject = cubeGl2;
@@ -100,10 +93,11 @@ int main() {
         viewer_make_current(viewer);
         dt = viewer_next_frame(viewer);
         t += 50.0 * dt;
-        hsv2rgb(fmod(t, 360.0), 1.0, 1.0, sphereMat.color);
-        mul3sv(scene.lights.local[0].ambient, 0.1, sphereMat.color);
-        mul3sv(scene.lights.local[0].diffuse, 1.0, sphereMat.color);
+        hsv2rgb(fmod(t, 360.0), 1.0, 1.0, color);
+        mul3sv(scene.lights.local[0].ambient, 0.1, color);
+        mul3sv(scene.lights.local[0].diffuse, 1.0, color);
         scene_render(&scene, &viewer->camera);
+        material_set_color_vec3(&sphereMat.mat, "color", color);
 
         viewer_make_current(viewer2);
         viewer_next_frame(viewer2);
