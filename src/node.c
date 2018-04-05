@@ -69,23 +69,6 @@ void node_update_matrices(struct Node* node) {
     node->changedFlags = NOTHING_CHANGED;
 }
 
-int render_graph(struct Node* node, const struct Camera* cam, const struct Lights* lights) {
-    unsigned int i;
-    int res = 1;
-
-    node_update_matrices(node);
-
-    if (node->geometry) {
-        geometry_render(node->geometry, cam, lights, node->model, node->inverseNormal);
-    }
-
-    for (i = 0; i < node->nbChildren && res; i++) {
-        res = res && render_graph(node->children[i], cam, lights);
-    }
-
-    return res;
-}
-
 void graph_free(struct Node* root) {
     int i;
 

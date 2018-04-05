@@ -96,12 +96,12 @@ int main() {
         hsv2rgb(fmod(t, 360.0), 1.0, 1.0, color);
         mul3sv(scene.lights.local[0].ambient, 0.1, color);
         mul3sv(scene.lights.local[0].diffuse, 1.0, color);
-        scene_render(&scene, &viewer->camera);
+        scene_render(&scene, viewer);
         material_set_color_vec3(&sphereMat.mat, "color", color);
 
         viewer_make_current(viewer2);
         viewer_next_frame(viewer2);
-        scene_render(&scene2, &viewer2->camera);
+        scene_render(&scene2, viewer2);
     }
 
     globject_free(&cubeGl2);

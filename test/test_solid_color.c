@@ -33,13 +33,13 @@ int main(int argc, char** argv) {
         solid_color_material_init(&solidcolor);
         solid_color_material_set_color(&solidcolor, 1.0, 0.0, 1.0);
         geom.glObject = cubeGl;
-        geom.material = (struct Material*) &solidcolor;
+        geom.material = &solidcolor.mat;
 
         scene_init(&scene);
         scene.root.geometry = &geom;
 
         viewer_next_frame(viewer);
-        scene_render(&scene, &viewer->camera);
+        scene_render(&scene, viewer);
 
         if (viewer_screenshot(viewer, argv[2])) {
             ret = 0;

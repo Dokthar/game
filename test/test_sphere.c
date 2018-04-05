@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
             usleep(10 * 1000);
             viewer_process_events(viewer);
             viewer_next_frame(viewer);
-            scene_render(&scene, &viewer->camera);
+            scene_render(&scene, viewer);
         }
         ret = 0;
 

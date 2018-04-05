@@ -81,7 +81,7 @@ int run(const char* text) {
         viewer_process_events(viewer);
         usleep(10 * 1000);
         viewer_next_frame(viewer);
-        scene_render(&scene, &viewer->camera);
+        scene_render(&scene, viewer);
     }
 
     scene_free(&scene);
