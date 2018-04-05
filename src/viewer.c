@@ -47,7 +47,7 @@ static void window_size_callback(GLFWwindow* window, int width, int height) {
     struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
     viewer_make_current(&viewer->user);
     glViewport(0, 0, width, height);
-    viewer->user.camera.ratio = ((float)width) / ((float)height);
+    camera_resize(&viewer->user.camera, width, height, 1);
     camera_update_projection(&viewer->user.camera);
     viewer->user.width = width;
     viewer->user.height = height;
