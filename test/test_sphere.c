@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
         geom.glObject = sphereGl;
 
         scene_init(&scene);
+        viewer->viewport.scene = &scene;
         scene.root.geometry = &geom;
         node_rotate(&scene.root, VEC3_AXIS_X, -M_PI / 2.0);
         viewer->close_callback = close_callback;
@@ -63,7 +64,7 @@ int main(int argc, char** argv) {
             usleep(10 * 1000);
             viewer_process_events(viewer);
             viewer_next_frame(viewer);
-            scene_render(&scene, viewer);
+            viewer_render(viewer);
         }
         ret = 0;
 

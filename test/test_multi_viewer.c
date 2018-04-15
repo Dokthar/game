@@ -72,6 +72,8 @@ int main() {
 
     viewer_make_current(viewer);
     scene_init(&scene);
+    viewer->viewport.scene = &scene;
+
     spheres_and_boxes(&sphereMat.mat, &textureMat.mat, &scene.root);
 
     test_init_local_light(&scene.lights.local[0]);
@@ -79,6 +81,7 @@ int main() {
 
     viewer_make_current(viewer2);
     scene_init(&scene2);
+    viewer2->viewport.scene = &scene2;
     node_init(&nodeCube, &cube2);
     node_add_child(&scene2.root, &nodeCube);
 
@@ -96,12 +99,12 @@ int main() {
         hsv2rgb(fmod(t, 360.0), 1.0, 1.0, color);
         mul3sv(scene.lights.local[0].ambient, 0.1, color);
         mul3sv(scene.lights.local[0].diffuse, 1.0, color);
-        scene_render(&scene, viewer);
+        viewer_render(viewer);
         material_set_color_vec3(&sphereMat.mat, "color", color);
 
         viewer_make_current(viewer2);
         viewer_next_frame(viewer2);
-        scene_render(&scene2, viewer2);
+        viewer_render(viewer2);
     }
 
     globject_free(&cubeGl2);

@@ -41,6 +41,7 @@ int run() {
     material_set_color(&mat_solidcolor.mat, "color", 0, 1, 0);
 
     scene_init(&scene);
+    viewer->viewport.scene = &scene;
     scene.lights.numLocal = 1;
     test_init_local_light(&scene.lights.local[0]);
 
@@ -53,7 +54,7 @@ int run() {
         viewer_process_events(viewer);
         usleep(10 * 1000);
         viewer_next_frame(viewer);
-        scene_render(&scene, viewer);
+        viewer_render(viewer);
     }
 
     viewer_free(viewer);

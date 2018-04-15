@@ -1,11 +1,12 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "scene/geometry.h"
-#include "scene/node.h"
+#include "viewport.h"
 
-int render_graph(struct Node* root, const struct Camera* cam, const struct Lights* lights);
+struct Renderer {
+    int stub;
+};
 
-void render_geometry(const struct Geometry* geometry, const struct Camera* camera, const struct Lights* lights, Mat4 model, Mat3 inverseNormal);
+int render_viewport(struct Renderer* rdr, struct ViewPort* view);
 
 #endif

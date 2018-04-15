@@ -34,8 +34,7 @@ void material_update_params(const struct Material *mat) {
     }
 }
 
-
-void render_geometry(const struct Geometry* geometry, const struct Camera* camera, const struct Lights* lights, Mat4 model, Mat3 inverseNormal) {
+void render_geometry(struct Renderer* r, const struct Geometry* geometry, const struct Camera* camera, const struct Lights* lights, Mat4 model, Mat3 inverseNormal) {
     const struct Material* mat = geometry->material;
 
     glUseProgram(mat->shader);
@@ -58,24 +57,26 @@ void render_geometry(const struct Geometry* geometry, const struct Camera* camer
     } else {
         glDrawArrays(GL_TRIANGLES, 0, geometry->glObject.numVertices);
     }
-
-    glBindVertexArray(0);
-    glUseProgram(0);
 }
 
-int render_graph(struct Node* node, const struct Camera* cam, const struct Lights* lights) {
+int render_graph(struct Renderer* rm, struct Node* node, const struct Camera* cam, const struct Lights* lights) {
     unsigned int i;
     int res = 1;
 
     node_update_matrices(node);
 
     if (node->geometry) {
-	render_geometry(node->geometry, cam, lights, node->model, node->inverseNormal);
+	render_geometry(rm, node->geometry, cam, lights, node->model, node->inverseNormal);
     }
 
     for (i = 0; i < node->nbChildren && res; i++) {
-        res = res && render_graph(node->children[i], cam, lights);
+        res = res && render_graph(rm, node->children[i], cam, lights);
     }
 
     return res;
 }
+
+int render_viewport(struct Renderer* render, struct ViewPort* view) {
+    return render_graph(render, &view->scene->root, &view->camera, &view->scene->lights);
+}
+

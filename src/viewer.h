@@ -1,11 +1,13 @@
 #ifndef VIEWER_H
 #define VIEWER_H
 
-#include "render/camera.h"
+#include "render/viewport.h"
+#include "render/renderer.h"
 
 struct Viewer {
-    struct Camera camera;
+    struct ViewPort viewport;
     unsigned int width, height;
+    struct Renderer renderer;
     void (*cursor_callback)(struct Viewer*, double, double, double, double, int, int, int, void*);
     void (*wheel_callback)(struct Viewer*, double, double, void*);
     void (*key_callback)(struct Viewer*, int, int, int, int, void*);
@@ -14,6 +16,9 @@ struct Viewer {
 };
 
 struct Viewer* viewer_new(unsigned int width, unsigned int height, const char* title);
+
+int viewer_render(struct Viewer* viewer);
+
 void viewer_free(struct Viewer* viewer);
 
 void viewer_make_current(struct Viewer* viewer);

@@ -22,18 +22,18 @@ void cursor_rotate_camera(struct Viewer* viewer, double xpos, double ypos, doubl
     Vec3 axis = {0, 1, 0};
 
     if (buttonLeft) {
-        camera_rotate(&viewer->camera, axis, dx / viewer->width);
-        camera_get_right(&viewer->camera, axis);
-        camera_rotate(&viewer->camera, axis, dy / viewer->height);
+        camera_rotate(&viewer->viewport.camera, axis, dx / viewer->width);
+        camera_get_right(&viewer->viewport.camera, axis);
+        camera_rotate(&viewer->viewport.camera, axis, dy / viewer->height);
     }
 }
 
 void wheel_callback(struct Viewer* viewer, double xoffset, double yoffset, void* userData) {
     Vec3 axis;
 
-    camera_get_backward(&viewer->camera, axis);
+    camera_get_backward(&viewer->viewport.camera, axis);
     scale3v(axis, -yoffset);
-    camera_move(&viewer->camera, axis);
+    camera_move(&viewer->viewport.camera, axis);
 }
 
 void key_callback(struct Viewer* viewer, int key, int scancode, int action, int mods, void* userData) {
@@ -45,39 +45,39 @@ void key_callback(struct Viewer* viewer, int key, int scancode, int action, int 
             break;
         case GLFW_KEY_PAGE_UP:
         case GLFW_KEY_Q:
-            camera_get_up(&viewer->camera, axis);
+            camera_get_up(&viewer->viewport.camera, axis);
             scale3v(axis, 0.1);
-            camera_move(&viewer->camera, axis);
+            camera_move(&viewer->viewport.camera, axis);
             break;
         case GLFW_KEY_PAGE_DOWN:
         case GLFW_KEY_E:
-            camera_get_up(&viewer->camera, axis);
+            camera_get_up(&viewer->viewport.camera, axis);
             scale3v(axis, -0.1);
-            camera_move(&viewer->camera, axis);
+            camera_move(&viewer->viewport.camera, axis);
             break;
         case GLFW_KEY_LEFT:
         case GLFW_KEY_A:
-            camera_get_right(&viewer->camera, axis);
+            camera_get_right(&viewer->viewport.camera, axis);
             scale3v(axis, -0.1);
-            camera_move(&viewer->camera, axis);
+            camera_move(&viewer->viewport.camera, axis);
             break;
         case GLFW_KEY_RIGHT:
         case GLFW_KEY_D:
-            camera_get_right(&viewer->camera, axis);
+            camera_get_right(&viewer->viewport.camera, axis);
             scale3v(axis, 0.1);
-            camera_move(&viewer->camera, axis);
+            camera_move(&viewer->viewport.camera, axis);
             break;
         case GLFW_KEY_DOWN:
         case GLFW_KEY_S:
-            camera_get_backward(&viewer->camera, axis);
+            camera_get_backward(&viewer->viewport.camera, axis);
             scale3v(axis, 0.1);
-            camera_move(&viewer->camera, axis);
+            camera_move(&viewer->viewport.camera, axis);
             break;
         case GLFW_KEY_UP:
         case GLFW_KEY_W:
-            camera_get_backward(&viewer->camera, axis);
+            camera_get_backward(&viewer->viewport.camera, axis);
             scale3v(axis, -0.1);
-            camera_move(&viewer->camera, axis);
+            camera_move(&viewer->viewport.camera, axis);
             break;
         case GLFW_KEY_F12:
             viewer_screenshot(viewer, "screenshot.png");

@@ -45,6 +45,7 @@ int run(const char* text) {
     running = 1;
 
     scene_init(&scene);
+    viewer->viewport.scene = &scene;
     viewer->callbackData = &scene.root;
 
     ttf = asset_manager_find_file("font/FreeSans.ttf");
@@ -81,7 +82,7 @@ int run(const char* text) {
         viewer_process_events(viewer);
         usleep(10 * 1000);
         viewer_next_frame(viewer);
-        scene_render(&scene, viewer);
+        viewer_render(viewer);
     }
 
     scene_free(&scene);

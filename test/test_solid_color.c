@@ -36,10 +36,11 @@ int main(int argc, char** argv) {
         geom.material = &solidcolor.mat;
 
         scene_init(&scene);
+        viewer->viewport.scene = &scene;
         scene.root.geometry = &geom;
 
         viewer_next_frame(viewer);
-        scene_render(&scene, viewer);
+        viewer_render(viewer);
 
         if (viewer_screenshot(viewer, argv[2])) {
             ret = 0;

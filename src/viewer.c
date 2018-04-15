@@ -47,8 +47,8 @@ static void window_size_callback(GLFWwindow* window, int width, int height) {
     struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
     viewer_make_current(&viewer->user);
     glViewport(0, 0, width, height);
-    camera_resize(&viewer->user.camera, width, height, 1);
-    camera_update_projection(&viewer->user.camera);
+    camera_resize(&viewer->user.viewport.camera, width, height, 1);
+    camera_update_projection(&viewer->user.viewport.camera);
     viewer->user.width = width;
     viewer->user.height = height;
 }
@@ -92,7 +92,7 @@ struct Viewer* viewer_new(unsigned int width, unsigned int height, const char* t
                 fprintf(stderr, "Error: failed to load internal shaders\n");
             } else {
                 Vec3 pos = {0, 0, 10};
-                camera_load_default(&viewer->user.camera, pos, ((float)width) / ((float)height));
+                camera_load_default(&viewer->user.viewport.camera, pos, ((float)width) / ((float)height));
 
                 viewer->user.cursor_callback = NULL;
                 viewer->user.wheel_callback = NULL;
@@ -148,6 +148,10 @@ double viewer_next_frame(struct Viewer* viewer) {
     glfwSwapBuffers(((struct ViewerImpl*)viewer)->window);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     return dt;
+}
+
+int viewer_render(struct Viewer* viewer) {
+    return render_viewport(&viewer->renderer, &viewer->viewport);
 }
 
 #define ALIGN 4
