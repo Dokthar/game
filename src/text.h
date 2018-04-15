@@ -2,7 +2,7 @@
 #define TEXT_H
 
 #include "mesh/mesh.h"
-#include "geometry/geometry.h"
+#include "scene/geometry.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

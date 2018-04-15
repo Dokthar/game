@@ -5,7 +5,7 @@
 #define Vec3 vec3
 #else
 #include <GL/glew.h>
-#include "../linear_algebra.h"
+#include "math/linear_algebra.h"
 #endif
 
 #define MAX_DIRECTIONAL_LIGHTS 10

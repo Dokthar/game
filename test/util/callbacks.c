@@ -1,10 +1,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "callbacks.h"
 #include "viewer.h"
-#include "node.h"
-#include "camera.h"
-#include "linear_algebra.h"
+#include "scene/node.h"
+#include "render/camera.h"
+#include "math/linear_algebra.h"
 
 int running;
 

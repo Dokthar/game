@@ -1,4 +1,4 @@
-#include "linear_algebra.h"
+#include "math/linear_algebra.h"
 
 void hsv2rgb(double h, double s, double v, Vec3 dest) {
     double p, q, t, rem;

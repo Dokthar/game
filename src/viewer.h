@@ -1,7 +1,7 @@
-#include "camera.h"
-
 #ifndef VIEWER_H
 #define VIEWER_H
+
+#include "render/camera.h"
 
 struct Viewer {
     struct Camera camera;

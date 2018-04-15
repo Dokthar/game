@@ -5,8 +5,8 @@ LIB := libgame.a
 CFLAGS ?= -std=c89 -pedantic -march=native -Wall -D_XOPEN_SOURCE=500 -D_POSIX_C_SOURCE=200112L -O3
 CFLAGS += -DM_PI=3.14159265358979 $(shell pkg-config --cflags $(DEPS)) -I. -Isrc
 LDLIBS += -lm $(shell pkg-config --libs $(DEPS))
-
-LIB_SOURCES := $(wildcard src/*.c src/material/*.c src/render/*.c src/mesh/*.c src/light/*.c src/img/*.c)
+LIB_DIRS := src $(shell ls -d src/*/)
+LIB_SOURCES := $(wildcard $(foreach dir, $(LIB_DIRS), $(dir)/*.c ))
 LIB_OBJECTS := $(LIB_SOURCES:.c=.o)
 TEST_SOURCES := $(wildcard test/*.c)
 TEST_OBJECTS := $(TEST_SOURCES:.c=.o)

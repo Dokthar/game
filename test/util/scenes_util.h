@@ -1,8 +1,8 @@
 #ifndef TEST_SCENES_UTIL_H
 #define TEST_SCENES_UTIL_H
 
-#include "node.h"
-#include "geometry/geometry.h"
+#include "scene/node.h"
+#include "scene/geometry.h"
 
 void new_geom_surface(struct Geometry* geom, int slen, float spacing, struct Node* root);
 

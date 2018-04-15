@@ -1,9 +1,9 @@
-#include "text.h"
-
-#include "linear_algebra.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glew.h>
+
+#include "text.h"
+#include "math/linear_algebra.h"
 
 #define NB_GLYPHS_PER_ROW 32
 #define NB_GLYPHS_PER_LINE NB_GLYPHS_PER_ROW

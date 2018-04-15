@@ -3,7 +3,7 @@
 #include "scenes_basic.h"
 #include "mesh/box.h"
 #include "mesh/icosphere.h"
-#include "linear_algebra.h"
+#include "math/linear_algebra.h"
 
 struct Node *box_surface(struct Material* mat, float size, int slen, float spacing) {
     struct Node *root;

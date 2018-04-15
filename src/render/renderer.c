@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <stdio.h>
 #include "renderer.h"
-#include "globject.h"
+#include "gl/globject.h"
 
 void material_update_params(const struct Material *mat) {
     unsigned int i;

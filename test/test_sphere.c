@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "viewer.h"
-#include "scene.h"
-#include "node.h"
+#include "scene/scene.h"
+#include "scene/node.h"
 #include "asset_manager.h"
-#include "globject.h"
-#include "linear_algebra.h"
+#include "gl/globject.h"
+#include "math/linear_algebra.h"
 #include "mesh/icosphere.h"
 #include "mesh/sphere_uv.h"
 #include "material/solid_texture.h"

@@ -7,10 +7,10 @@
 #include <unistd.h>
 
 #include "viewer.h"
-#include "camera.h"
-#include "globject.h"
+#include "render/camera.h"
+#include "gl/globject.h"
 #include "texture.h"
-#include "scene.h"
+#include "scene/scene.h"
 #include "asset_manager.h"
 #include "material/solid_color.h"
 #include "material/solid_texture.h"

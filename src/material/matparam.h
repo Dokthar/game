@@ -1,6 +1,6 @@
 #ifndef MATPARAM_H
 #define MATPARAM_H
-#include "linear_algebra.h"
+#include "math/linear_algebra.h"
 #include <GL/gl.h>
 
 enum MatparamType {

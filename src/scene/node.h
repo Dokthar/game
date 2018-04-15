@@ -1,9 +1,9 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "geometry/geometry.h"
-#include "linear_algebra.h"
-#include "quaternion.h"
+#include "geometry.h"
+#include "math/linear_algebra.h"
+#include "math/quaternion.h"
 #include "bounding_box.h"
 
 struct Node {

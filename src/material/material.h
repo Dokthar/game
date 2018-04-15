@@ -2,7 +2,7 @@
 #define MATERIAL_H
 
 #include <GL/glew.h>
-#include "camera.h"
+#include "render/camera.h"
 #include "light/light.h"
 #include "matparam.h"
 

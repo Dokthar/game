@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "viewer.h"
-#include "scene.h"
+#include "scene/scene.h"
 #include "asset_manager.h"
-#include "globject.h"
+#include "gl/globject.h"
 #include "mesh/box.h"
 #include "material/solid_color.h"
 

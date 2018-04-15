@@ -1,8 +1,8 @@
-#ifndef RENDER_MANAGER_H
-#define RENDER_MANAGER_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
-#include "geometry/geometry.h"
-#include "node.h"
+#include "scene/geometry.h"
+#include "scene/node.h"
 
 int render_graph(struct Node* root, const struct Camera* cam, const struct Lights* lights);
 

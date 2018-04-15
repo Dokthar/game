@@ -6,9 +6,9 @@
 #include <unistd.h>
 
 #include "viewer.h"
-#include "camera.h"
-#include "scene.h"
-#include "globject.h"
+#include "render/camera.h"
+#include "scene/scene.h"
+#include "gl/globject.h"
 #include "text.h"
 #include "shader.h"
 #include "asset_manager.h"

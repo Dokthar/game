@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "scenes_util.h"
-#include "linear_algebra.h"
+#include "math/linear_algebra.h"
 #include "mesh/mesh.h"
 
 void new_geom_surface(struct Geometry* geom, int slen, float spacing, struct Node* root) {
