@@ -3,6 +3,80 @@
 #include "renderer.h"
 #include "gl/globject.h"
 
+/* TODO: shader/program abstraction
+   void set_shader(struct Renderer* rdr, Shader shader); */
+/* TODO: texture abstraction
+   void set_texture(struct Renderer* rdr, int unit, Texture tex); */
+/* TODO: Mesh abstraction
+   void render_mesh(struct Renderer* rdr, Mesh mesh); */
+
+void set_depth_test(struct Renderer* rdr, int enable) {
+    if (enable) {
+        rdr->ctx.flags.depth_test_enabled = 1;
+        glEnable(GL_DEPTH_TEST);
+    } else {
+        rdr->ctx.flags.depth_test_enabled = 0;
+        glDisable(GL_DEPTH_TEST);
+    }
+}
+
+void set_depth_function(struct Renderer* rdr, enum TestFunction func) {
+    glDepthFunc(func);
+}
+
+void set_blend_function(struct Renderer* rdr, struct BlendFunction* func) {
+    struct BlendFunction* cf = &rdr->ctx.blend_func;
+
+    if (!func) {
+        rdr->ctx.flags.blend_enabled = 1;
+        glDisable(GL_BLEND);
+        return;
+    } else if (rdr->ctx.flags.blend_enabled == 0) {
+        rdr->ctx.flags.blend_enabled = 1;
+        glEnable(GL_BLEND);
+    }
+
+    if (func->flags.separate_function) {
+        if (cf->src_factor != func->src_factor
+            || cf->dst_factor != func->dst_factor
+            || cf->src_factor_alpha != func->src_factor_alpha
+            || cf->dst_factor_alpha != func->dst_factor_alpha) {
+            *cf = *func;
+            glBlendFuncSeparate(func->src_factor, func->dst_factor,
+                    func->src_factor_alpha, func->dst_factor_alpha);
+        }
+    } else {
+            *cf = *func;
+            cf->src_factor_alpha = func->src_factor;
+            cf->dst_factor_alpha = func->dst_factor;
+            glBlendFunc(func->src_factor, func->dst_factor);
+    }
+}
+
+void set_face_culling(struct Renderer* rdr, enum FaceCull cull) {
+    if (cull == CULL_OFF) {
+        rdr->ctx.flags.face_cull_enabled = 0;
+        glDisable(GL_CULL_FACE);
+    } else if (rdr->ctx.flags.face_cull_enabled == 0) {
+        rdr->ctx.flags.face_cull_enabled = 1;
+        glEnable(GL_CULL_FACE);
+    }
+    if (rdr->ctx.culling != cull) {
+        rdr->ctx.culling = cull;
+        glCullFace(cull);
+    }
+}
+
+void set_polygon_mode(struct Renderer* rdr, enum PolygonMode mode) {
+    if (rdr->ctx.mode != mode) {
+        rdr->ctx.mode = mode;
+        glPolygonMode(GL_FRONT_AND_BACK, mode);
+    }
+}
+
+/* dont:        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+   deprecated ? glEnable(GL_TEXTURE_2D);
+*/
 void material_update_params(const struct Material *mat) {
     unsigned int i;
     struct Matparam param;
@@ -41,7 +115,7 @@ void render_geometry(struct Renderer* r, const struct Geometry* geometry, const 
 
     glBindVertexArray(geometry->glObject.vao);
 
-    glPolygonMode(GL_FRONT_AND_BACK, mat->mode);
+    set_polygon_mode(r, mat->mode);
 
     light_load_uniforms(mat->shader, lights->directional, lights->numDirectional, lights->local, lights->numLocal);
 
@@ -80,3 +154,17 @@ int render_viewport(struct Renderer* render, struct ViewPort* view) {
     return render_graph(render, &view->scene->root, &view->camera, &view->scene->lights);
 }
 
+int renderer_init(struct Renderer* rdr) {
+    set_depth_test(rdr, 1);
+    set_depth_function(rdr, TEST_LESS);
+    set_blend_function(rdr, &BLEND_FUNC_ALPHA);
+    /*
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glEnable(GL_TEXTURE_2D);
+    */
+    glEnable(GL_MULTISAMPLE);
+}
+
+int renderer_destroy(struct Renderer* rdr) {
+    /* TODO: free all gl objects */
+}
