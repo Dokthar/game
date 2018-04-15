@@ -38,15 +38,14 @@ int run(const char* text) {
     asset_manager_add_path("test/assets");
 
     viewer = viewer_new(1024, 768, "test_text");
-    viewer->cursor_callback = cursor_rotate_camera;
-    viewer->wheel_callback = wheel_callback;
-    viewer->key_callback = key_callback;
-    viewer->close_callback = close_callback;
+    viewer->context.cursor_callback = cursor_rotate_camera;
+    viewer->context.wheel_callback = wheel_callback;
+    viewer->context.key_callback = key_callback;
+    viewer->context.close_callback = close_callback;
     running = 1;
 
     scene_init(&scene);
     viewer->viewport.scene = &scene;
-    viewer->callbackData = &scene.root;
 
     ttf = asset_manager_find_file("font/FreeSans.ttf");
     if (!ttf) {
@@ -79,7 +78,7 @@ int run(const char* text) {
     scene_add(&scene, &text_node);
 
     while (running) {
-        viewer_process_events(viewer);
+        viewer_update(viewer);
         usleep(10 * 1000);
         viewer_next_frame(viewer);
         viewer_render(viewer);

@@ -31,8 +31,8 @@ int run() {
     asset_manager_add_path("..");
     asset_manager_add_path("../..");
     viewer = viewer_new(1024, 768, "test_scenes");
-    viewer->key_callback = key_callback;
-    viewer->close_callback = close_callback;
+    viewer->context.key_callback = key_callback;
+    viewer->context.close_callback = close_callback;
     running = 1;
 
     phong_texture_material_init(&mat_checkerboard);
@@ -48,10 +48,8 @@ int run() {
     spheres_and_boxes(&mat_solidcolor.mat, &mat_checkerboard.mat, &scene.root);
     node_rotate(&scene.root, (void *)VEC3_AXIS_X, M_PI / 2.0);
 
-    viewer->callbackData = &scene.root;
-
     while (running) {
-        viewer_process_events(viewer);
+        viewer_update(viewer);
         usleep(10 * 1000);
         viewer_next_frame(viewer);
         viewer_render(viewer);

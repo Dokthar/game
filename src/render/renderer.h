@@ -8,6 +8,8 @@
 struct Renderer {
     struct Statistics stats;
     struct RenderState ctx;
+    unsigned int last_width;
+    unsigned int last_height;
 };
 
 int render_viewport(struct Renderer* rdr, struct ViewPort* view);

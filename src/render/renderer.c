@@ -74,9 +74,6 @@ void set_polygon_mode(struct Renderer* rdr, enum PolygonMode mode) {
     }
 }
 
-/* dont:        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-   deprecated ? glEnable(GL_TEXTURE_2D);
-*/
 void material_update_params(const struct Material *mat) {
     unsigned int i;
     struct Matparam param;
@@ -151,6 +148,12 @@ int render_graph(struct Renderer* rm, struct Node* node, const struct Camera* ca
 }
 
 int render_viewport(struct Renderer* render, struct ViewPort* view) {
+    if (view->camera.width != render->last_width
+	|| view->camera.height != render->last_height) {
+	render->last_width = view->camera.width;
+	render->last_height = view->camera.height;
+	glViewport(0, 0, view->camera.width, view->camera.height);
+    }
     return render_graph(render, &view->scene->root, &view->camera, &view->scene->lights);
 }
 
@@ -158,11 +161,9 @@ int renderer_init(struct Renderer* rdr) {
     set_depth_test(rdr, 1);
     set_depth_function(rdr, TEST_LESS);
     set_blend_function(rdr, &BLEND_FUNC_ALPHA);
-    /*
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    glEnable(GL_TEXTURE_2D);
-    */
+
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_TEXTURE_2D);
 }
 
 int renderer_destroy(struct Renderer* rdr) {

@@ -9,26 +9,30 @@
 
 int running;
 
-void cursor_rotate_object(struct Viewer* viewer, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight, void* data) {
+void cursor_rotate_scene(struct Context* ctx, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight) {
+    struct Viewer* viewer = ctx->user_data;
+    struct Node* scene = &viewer->viewport.scene->root;
     Vec3 x = {0, 1, 0}, y = {1, 0, 0};
 
     if (buttonLeft) {
-        node_rotate(data, x, 4.0 * dx / viewer->width);
-        node_rotate(data, y, 4.0 * dy / viewer->height);
+        node_rotate(scene, x, 4.0 * dx / ctx->width);
+        node_rotate(scene, y, 4.0 * dy / ctx->height);
     }
 }
 
-void cursor_rotate_camera(struct Viewer* viewer, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight, void* data) {
+void cursor_rotate_camera(struct Context* ctx, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight) {
+    struct Viewer* viewer = ctx->user_data;
     Vec3 axis = {0, 1, 0};
 
     if (buttonLeft) {
-        camera_rotate(&viewer->viewport.camera, axis, dx / viewer->width);
+        camera_rotate(&viewer->viewport.camera, axis, dx / ctx->width);
         camera_get_right(&viewer->viewport.camera, axis);
-        camera_rotate(&viewer->viewport.camera, axis, dy / viewer->height);
+        camera_rotate(&viewer->viewport.camera, axis, dy / ctx->height);
     }
 }
 
-void wheel_callback(struct Viewer* viewer, double xoffset, double yoffset, void* userData) {
+void wheel_callback(struct Context* ctx, double xoffset, double yoffset) {
+    struct Viewer* viewer = ctx->user_data;
     Vec3 axis;
 
     camera_get_backward(&viewer->viewport.camera, axis);
@@ -36,7 +40,8 @@ void wheel_callback(struct Viewer* viewer, double xoffset, double yoffset, void*
     camera_move(&viewer->viewport.camera, axis);
 }
 
-void key_callback(struct Viewer* viewer, int key, int scancode, int action, int mods, void* userData) {
+void key_callback(struct Context* ctx, int key, int scancode, int action, int mods) {
+    struct Viewer* viewer = ctx->user_data;
     Vec3 axis = {0, 1, 0};
 
     switch (key) {
@@ -85,7 +90,7 @@ void key_callback(struct Viewer* viewer, int key, int scancode, int action, int 
     }
 }
 
-void close_callback(struct Viewer* viewer, void* userData) {
+void close_callback(struct Context* ctx) {
     running = 0;
 }
 

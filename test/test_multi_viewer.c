@@ -42,15 +42,15 @@ int main() {
     asset_manager_add_path("..");
     asset_manager_add_path("../test/assets");
     viewer = viewer_new(640, 480, "Game");
-    viewer->cursor_callback = cursor_rotate_object;
-    viewer->wheel_callback = wheel_callback;
-    viewer->key_callback = key_callback;
-    viewer->close_callback = close_callback;
+    viewer->context.cursor_callback = cursor_rotate_scene;
+    viewer->context.wheel_callback = wheel_callback;
+    viewer->context.key_callback = key_callback;
+    viewer->context.close_callback = close_callback;
     viewer2 = viewer_new(640, 480, "Game 2");
-    viewer2->cursor_callback = cursor_rotate_object;
-    viewer2->wheel_callback = wheel_callback;
-    viewer2->key_callback = key_callback;
-    viewer2->close_callback = close_callback;
+    viewer2->context.cursor_callback = cursor_rotate_scene;
+    viewer2->context.wheel_callback = wheel_callback;
+    viewer2->context.key_callback = key_callback;
+    viewer2->context.close_callback = close_callback;
     running = 1;
 
     make_box(&cubeMesh, 2.0, 2.0, 2.0);
@@ -85,12 +85,9 @@ int main() {
     node_init(&nodeCube, &cube2);
     node_add_child(&scene2.root, &nodeCube);
 
-    viewer->callbackData = &scene.root;
-    viewer2->callbackData = &scene2.root;
-
     while (running) {
-        viewer_process_events(viewer);
-        viewer_process_events(viewer2);
+        viewer_update(viewer);
+        viewer_update(viewer2);
         usleep(10 * 1000);
 
         viewer_make_current(viewer);

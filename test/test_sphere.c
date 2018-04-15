@@ -47,22 +47,21 @@ int main(int argc, char** argv) {
         globject_new(&sphere, &sphereGl);
         solid_texture_material_init(&solidtexture);
         matparam_set_texture(&(solidtexture.texture), asset_manager_load_texture(texture[type].path));
-        geom.material = (struct Material*) &solidtexture;
+        geom.material = &solidtexture.mat;
         geom.glObject = sphereGl;
 
         scene_init(&scene);
         viewer->viewport.scene = &scene;
         scene.root.geometry = &geom;
         node_rotate(&scene.root, VEC3_AXIS_X, -M_PI / 2.0);
-        viewer->close_callback = close_callback;
-        viewer->wheel_callback = wheel_callback;
-        viewer->cursor_callback = cursor_rotate_object;
-        viewer->callbackData = &scene.root;
+        viewer->context.close_callback = close_callback;
+        viewer->context.wheel_callback = wheel_callback;
+        viewer->context.cursor_callback = cursor_rotate_scene;
 
         running = 1;
         while (running) {
             usleep(10 * 1000);
-            viewer_process_events(viewer);
+            viewer_update(viewer);
             viewer_next_frame(viewer);
             viewer_render(viewer);
         }

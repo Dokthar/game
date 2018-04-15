@@ -6,172 +6,109 @@
 #include "viewer.h"
 #include "img/png.h"
 #include "material/shaders.h"
+#include "glfw3/glfw3_context.h"
 
 struct ViewerImpl {
     struct Viewer user;
-    GLFWwindow* window;
     int hasLast;
     double lastX, lastY;
     double lastTime;
     GLuint shaders[NUM_SHADERS];
 };
 
-static void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
-    struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
-    int buttonLeft = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-    int buttonMiddle = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
-    int buttonRight = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
-    if (viewer->hasLast && viewer->user.cursor_callback) {
-        viewer->user.cursor_callback(&viewer->user, xpos, ypos, xpos - viewer->lastX, ypos - viewer->lastY, buttonLeft, buttonMiddle, buttonRight, viewer->user.callbackData);
-    }
-    viewer->lastX = xpos;
-    viewer->lastY = ypos;
-    viewer->hasLast = 1;
-}
+static void resize_callback(struct Context* ctx, int width, int height) {
+    struct Viewer* viewer = ctx->user_data;
 
-static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
-    if (viewer->user.wheel_callback) {
-        viewer->user.wheel_callback(&viewer->user, xoffset, yoffset, viewer->user.callbackData);
-    }
-}
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
-    if (viewer->user.key_callback) {
-        viewer->user.key_callback(&viewer->user, key, scancode, action, mods, viewer->user.callbackData);
-    }
-}
-
-static void window_size_callback(GLFWwindow* window, int width, int height) {
-    struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
-    viewer_make_current(&viewer->user);
-    glViewport(0, 0, width, height);
-    camera_resize(&viewer->user.viewport.camera, width, height, 1);
-    camera_update_projection(&viewer->user.viewport.camera);
-    viewer->user.width = width;
-    viewer->user.height = height;
-}
-
-static void window_close_callback(GLFWwindow* window) {
-    struct ViewerImpl* viewer = glfwGetWindowUserPointer(window);
-    if (viewer->user.close_callback) {
-        viewer->user.close_callback(&viewer->user, viewer->user.callbackData);
+    if (viewer) {
+        camera_resize(&viewer->viewport.camera, width, height, 1);
+        camera_update_projection(&viewer->viewport.camera);
     }
 }
 
 struct Viewer* viewer_new(unsigned int width, unsigned int height, const char* title) {
-    struct ViewerImpl* viewer;
-    GLenum error;
+    struct ViewerImpl *viewer;
+    viewer = malloc(sizeof(struct ViewerImpl));
 
-    if (!(viewer = malloc(sizeof(struct ViewerImpl)))) {
+    if (!viewer) {
         fprintf(stderr, "Error: memory allocation failed\n");
-    } else if (!glfwInit()) {
-        fprintf(stderr, "Error: GLFW3 initialization failed\n");
-    } else {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-        glfwWindowHint(GLFW_SAMPLES, 4);
-        if (!(viewer->window = glfwCreateWindow(width, height, title, NULL, NULL))) {
-            fprintf(stderr, "Error: window creation failed\n");
-        } else {
-            glfwMakeContextCurrent(viewer->window);
-            glfwSetWindowUserPointer(viewer->window, viewer);
-            glfwSetKeyCallback(viewer->window, key_callback);
-            glfwSetCursorPosCallback(viewer->window, cursor_callback);
-            glfwSetScrollCallback(viewer->window, scroll_callback);
-            glfwSetWindowSizeCallback(viewer->window, window_size_callback);
-            glfwSetWindowCloseCallback(viewer->window, window_close_callback);
-            /*glfwSetInputMode(viewer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);*/
-            glewExperimental = 1;
-            if ((error = glGetError()) != GL_NO_ERROR) {
-                fprintf(stderr, "Error: GL context setup failed\n");
-            } else if ((error = glewInit()) != GLEW_OK) {
-                fprintf(stderr, "Error: GLEW initialization failed\n");
-            } else if (!game_load_shaders(viewer->shaders)) {
-                fprintf(stderr, "Error: failed to load internal shaders\n");
-            } else {
-                Vec3 pos = {0, 0, 10};
-                camera_load_default(&viewer->user.viewport.camera, pos, ((float)width) / ((float)height));
-
-                viewer->user.cursor_callback = NULL;
-                viewer->user.wheel_callback = NULL;
-                viewer->user.key_callback = NULL;
-                viewer->user.close_callback = NULL;
-                viewer->user.callbackData = NULL;
-                viewer->user.width = width;
-                viewer->user.height = height;
-                viewer->hasLast = 0;
-                viewer->lastTime = glfwGetTime();
-
-                glEnable(GL_DEPTH_TEST);
-                glDepthFunc(GL_LESS);
-                glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-                glEnable(GL_TEXTURE_2D);
-                glEnable(GL_MULTISAMPLE);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                viewer_make_current(&viewer->user);
-                return &viewer->user;
-            }
-        }
+        return NULL;
     }
 
-    viewer_free(&viewer->user);
-    return NULL;
+    viewer->user.settings.width = width;
+    viewer->user.settings.height = height;
+    viewer->user.settings.title = title;
+
+    glfw3_context_init(&viewer->user.context, &viewer->user.settings);
+    viewer->user.context.create(&viewer->user.context);
+    viewer->user.context.user_data = &viewer->user;
+    viewer->user.context.resize_callback = resize_callback;
+    viewer->user.context.make_current(&viewer->user.context);
+
+    if (!game_load_shaders(viewer->shaders)) {
+        fprintf(stderr, "Error: failed to load internal shaders\n");
+        viewer_free(&viewer->user);
+        return NULL;
+    } else {
+        Vec3 pos = {0, 0, 10};
+        camera_load_default(&viewer->user.viewport.camera, pos, ((float)width) / ((float)height));
+        viewer_make_current(&viewer->user);
+    }
+
+    return &viewer->user;
 }
 
 void viewer_free(struct Viewer* viewer) {
     if (viewer) {
         game_free_shaders(((struct ViewerImpl*)viewer)->shaders);
-        if (((struct ViewerImpl*)viewer)->window) {
-            glfwDestroyWindow(((struct ViewerImpl*)viewer)->window);
-            glfwTerminate();
-        }
+	viewer->context.destroy(&viewer->context);
+	glfw3_context_terminate();
         free(viewer);
     }
 }
 
 void viewer_make_current(struct Viewer* viewer) {
-    glfwMakeContextCurrent(((struct ViewerImpl*)viewer)->window);
+    viewer->context.make_current(&viewer->context);
     game_shaders = ((struct ViewerImpl*)viewer)->shaders;
 }
 
-void viewer_process_events(struct Viewer* viewer) {
-    glfwPollEvents();
-}
-
 double viewer_next_frame(struct Viewer* viewer) {
-    double current = glfwGetTime();
-    double dt = current - ((struct ViewerImpl*)viewer)->lastTime;
-    ((struct ViewerImpl*)viewer)->lastTime = current;
-    glfwSwapBuffers(((struct ViewerImpl*)viewer)->window);
+    double dt;
+
+    dt = viewer->context.swap_buffer(&viewer->context);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     return dt;
 }
 
+int viewer_update(struct Viewer* viewer) {
+    viewer->context.update(&viewer->context);
+}
+
 int viewer_render(struct Viewer* viewer) {
-    return render_viewport(&viewer->renderer, &viewer->viewport);
+    return render_viewport(viewer->context.renderer, &viewer->viewport);
 }
 
 #define ALIGN 4
 int viewer_screenshot(struct Viewer* viewer, const char* filename) {
     unsigned char* data;
     unsigned int rowStride;
+    /* use lastest "viewport" dimesions */
+    unsigned int width = viewer->context.width;
+    unsigned int height = viewer->context.height;
     int ret;
 
-    rowStride = 3 * viewer->width;
+    rowStride = 3 * width;
     if (rowStride % ALIGN) {
         rowStride += ALIGN - (rowStride % ALIGN);
     }
 
-    if (!(data = malloc(rowStride * viewer->height))) {
+    if (!(data = malloc(rowStride * height))) {
         fprintf(stderr, "Error: cannot allocate memory for screenshot\n");
         return 0;
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, viewer->width, viewer->height, GL_RGB, GL_UNSIGNED_BYTE, data);
-    ret = png_write(filename, ALIGN, viewer->width, viewer->height, 0, 1, data);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+    ret = png_write(filename, ALIGN, width, height, 0, 1, data);
     free(data);
     return ret;
 }

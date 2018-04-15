@@ -4,10 +4,10 @@
 
 extern int running;
 
-void cursor_rotate_object(struct Viewer* viewer, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight, void* data);
-void cursor_rotate_camera(struct Viewer* viewer, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight, void* data);
-void wheel_callback(struct Viewer* viewer, double xoffset, double yoffset, void* userData);
-void key_callback(struct Viewer* viewer, int key, int scancode, int action, int mods, void* userData);
-void close_callback(struct Viewer* viewer, void* userData);
+void cursor_rotate_scene(struct Context* ctx, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight);
+void cursor_rotate_camera(struct Context* ctx, double xpos, double ypos, double dx, double dy, int buttonLeft, int buttonMiddle, int buttonRight);
+void wheel_callback(struct Context* ctx, double xoffset, double yoffset);
+void key_callback(struct Context* ctx, int key, int scancode, int action, int mods);
+void close_callback(struct Context* ctx);
 
 #endif
