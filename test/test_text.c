@@ -24,8 +24,7 @@ int run(const char* text) {
     struct Viewer *viewer;
     struct Scene scene;
     struct BitmapFont* font;
-    struct Mesh text_mesh;
-    struct GLObject text_gl;
+    struct Mesh text_mesh = {0};
     struct Geometry text_geom;
     struct Node text_node;
     struct TextMaterial text_mat = {0};
@@ -63,7 +62,6 @@ int run(const char* text) {
         return err;
     }
 
-    globject_new(&text_mesh, &text_gl);
     material_init(&text_mat.mat, "text", 2, &text_mat.color);
     text_mat.mat.shader = asset_manager_load_shader("shaders/text.vert", "shaders/text.frag");
     text_mat.color.name = "textColor";
@@ -71,7 +69,7 @@ int run(const char* text) {
     text_mat.texture.name = "tex";
     material_set_texture(&text_mat.mat, "tex", font->texture_atlas);
 
-    text_geom.glObject = text_gl;
+    text_geom.mesh = &text_mesh;
     text_geom.material = &text_mat.mat;
 
     node_init(&text_node, &text_geom);
@@ -85,7 +83,7 @@ int run(const char* text) {
     }
 
     scene_free(&scene);
-    globject_free(&text_gl);
+    renderer_free_mesh(viewer->context.renderer, &text_mesh);
     mesh_free(&text_mesh);
     font_free(font);
     viewer_free(viewer);

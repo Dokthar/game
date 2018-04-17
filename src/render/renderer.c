@@ -1,5 +1,7 @@
 #include <GL/glew.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "renderer.h"
 #include "gl/globject.h"
 
@@ -7,8 +9,54 @@
    void set_shader(struct Renderer* rdr, Shader shader); */
 /* TODO: texture abstraction
    void set_texture(struct Renderer* rdr, int unit, Texture tex); */
-/* TODO: Mesh abstraction
-   void render_mesh(struct Renderer* rdr, Mesh mesh); */
+
+void renderer_load_mesh(struct Renderer* rdr, struct Mesh* mesh) {
+    struct GLObject* obj = malloc(sizeof(struct GLObject));
+
+    mesh->render_data = obj;
+    globject_new(mesh, obj);
+#ifdef CONFIG_STATISTICS
+    if (rdr->update_stats) {
+        rdr->stats.nbVboMemory += obj->numVBOs;
+    }
+#endif
+}
+
+void renderer_free_mesh(struct Renderer* rdr, struct Mesh* mesh) {
+    struct GLObject* obj = mesh->render_data;
+
+#ifdef CONFIG_STATISTICS
+    if (rdr->update_stats) {
+        rdr->stats.nbVboMemory -= obj->numVBOs;
+    }
+#endif
+    globject_free(obj);
+    mesh->render_data = NULL;
+}
+
+static void render_mesh(struct Renderer* rdr, struct Mesh* mesh) {
+    struct GLObject* obj;
+
+    if (mesh->render_data == NULL) {
+        renderer_load_mesh(rdr, mesh);
+    }
+    obj = mesh->render_data;
+
+    glBindVertexArray(obj->vao);
+
+    if (obj->numIndices) {
+        glDrawElements(GL_TRIANGLES, obj->numIndices, GL_UNSIGNED_INT, 0);
+    } else {
+        glDrawArrays(GL_TRIANGLES, 0, obj->numVertices);
+    }
+#ifdef CONFIG_STATISTICS
+    if (rdr->update_stats) {
+        rdr->stats.nbVertices += obj->numVertices;
+        rdr->stats.nbTriangles += obj->numVertices/3;
+        rdr->stats.nbVboMemory -= obj->numVBOs;
+    }
+#endif
+}
 
 void set_depth_test(struct Renderer* rdr, int enable) {
     if (enable) {
@@ -110,8 +158,6 @@ void render_geometry(struct Renderer* r, const struct Geometry* geometry, const 
 
     glUseProgram(mat->shader);
 
-    glBindVertexArray(geometry->glObject.vao);
-
     set_polygon_mode(r, mat->mode);
 
     light_load_uniforms(mat->shader, lights->directional, lights->numDirectional, lights->local, lights->numLocal);
@@ -123,11 +169,7 @@ void render_geometry(struct Renderer* r, const struct Geometry* geometry, const 
 
     material_update_params(mat);
 
-    if (geometry->glObject.numIndices) {
-        glDrawElements(GL_TRIANGLES, geometry->glObject.numIndices, GL_UNSIGNED_INT, 0);
-    } else {
-        glDrawArrays(GL_TRIANGLES, 0, geometry->glObject.numVertices);
-    }
+    render_mesh(r, geometry->mesh);
 }
 
 int render_graph(struct Renderer* rm, struct Node* node, const struct Camera* cam, const struct Lights* lights) {
@@ -148,11 +190,23 @@ int render_graph(struct Renderer* rm, struct Node* node, const struct Camera* ca
 }
 
 int render_viewport(struct Renderer* render, struct ViewPort* view) {
+#ifdef CONFIG_STATISTICS
+    if (render->update_stats) {
+        render->stats.nbTriangles = 0;
+        render->stats.nbVertices = 0;
+        render->stats.nbUniformsSet = 0;
+        render->stats.nbShaderSwitches = 0;
+        render->stats.nbShaderFrame = 0;
+        render->stats.nbTextureSwitches = 0;
+        render->stats.nbTextureFrame = 0;
+    }
+#endif
+
     if (view->camera.width != render->last_width
-	|| view->camera.height != render->last_height) {
-	render->last_width = view->camera.width;
-	render->last_height = view->camera.height;
-	glViewport(0, 0, view->camera.width, view->camera.height);
+        || view->camera.height != render->last_height) {
+        render->last_width = view->camera.width;
+        render->last_height = view->camera.height;
+        glViewport(0, 0, view->camera.width, view->camera.height);
     }
     return render_graph(render, &view->scene->root, &view->camera, &view->scene->lights);
 }
@@ -164,6 +218,8 @@ int renderer_init(struct Renderer* rdr) {
 
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_2D);
+    rdr->update_stats = 1;
+    memset(&rdr->stats, 0, sizeof(struct Statistics));
 }
 
 int renderer_destroy(struct Renderer* rdr) {

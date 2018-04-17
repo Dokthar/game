@@ -28,7 +28,6 @@ int main() {
     struct Viewer *viewer, *viewer2;
     double t = 0.0, dt;
     struct Mesh cubeMesh = {0};
-    struct GLObject cubeGl2 = {0};
     struct Geometry cube2 = {0};
     struct Scene scene, scene2;
     struct Node nodeCube;
@@ -53,22 +52,19 @@ int main() {
     viewer2->context.close_callback = close_callback;
     running = 1;
 
-    make_box(&cubeMesh, 2.0, 2.0, 2.0);
-    viewer_make_current(viewer);
-    viewer_make_current(viewer2);
-    globject_new(&cubeMesh, &cubeGl2);
-    mesh_free(&cubeMesh);
-
     viewer_make_current(viewer);
     phong_color_material_init(&sphereMat);
     phong_texture_material_init(&textureMat);
     material_set_texture(&textureMat.mat, "tex", asset_manager_load_texture("png/rgb_tux.png"));
 
     viewer_make_current(viewer2);
-    cube2.glObject = cubeGl2;
     solid_texture_material_init(&solidTex);
     matparam_set_texture(&(solidTex.texture), asset_manager_load_texture("png/rgb_tux.png"));
     cube2.material = &solidTex.mat;
+    cube2.mesh = &cubeMesh;
+    make_box(&cubeMesh, 2.0, 2.0, 2.0);
+    renderer_load_mesh(viewer2->context.renderer, &cubeMesh);
+    mesh_free(&cubeMesh);
 
     viewer_make_current(viewer);
     scene_init(&scene);
@@ -104,7 +100,7 @@ int main() {
         viewer_render(viewer2);
     }
 
-    globject_free(&cubeGl2);
+    renderer_free_mesh(viewer->context.renderer, &cubeMesh);
     viewer_free(viewer);
     scene_free(&scene);
 

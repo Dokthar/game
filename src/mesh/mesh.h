@@ -8,6 +8,7 @@ struct Mesh {
     unsigned int* indices;
     unsigned int numVertices, numIndices;
     int hasNormals, hasTexCoords;
+    void* render_data;
 };
 
 int mesh_unindex(struct Mesh* mesh);

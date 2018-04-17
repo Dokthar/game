@@ -11,7 +11,6 @@ int main(int argc, char** argv) {
     struct Viewer* viewer = NULL;
     struct Scene scene;
     struct Mesh cube = {0};
-    struct GLObject cubeGl = {0};
     struct SolidColorMaterial solidcolor = {0};
     struct Geometry geom = {0};
     double size;
@@ -29,10 +28,9 @@ int main(int argc, char** argv) {
     } else if (!make_box(&cube, size, size, size)) {
         fprintf(stderr, "Error: failed to create cube\n");
     } else {
-        globject_new(&cube, &cubeGl);
         solid_color_material_init(&solidcolor);
         solid_color_material_set_color(&solidcolor, 1.0, 0.0, 1.0);
-        geom.glObject = cubeGl;
+        geom.mesh = &cube;
         geom.material = &solidcolor.mat;
 
         scene_init(&scene);
@@ -50,7 +48,7 @@ int main(int argc, char** argv) {
         scene_free(&scene);
     }
 
-    globject_free(&cubeGl);
+    renderer_free_mesh(viewer->context.renderer, &cube);
     mesh_free(&cube);
     viewer_free(viewer);
 

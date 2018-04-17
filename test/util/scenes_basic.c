@@ -7,10 +7,11 @@
 
 struct Node *box_surface(struct Material* mat, float size, int slen, float spacing) {
     struct Node *root;
-    struct Mesh mesh;
+    struct Mesh *mesh;
     struct Geometry *g;
 
     root = malloc(sizeof(struct Node));
+    mesh = calloc(1, sizeof(struct Mesh));
     g = malloc(sizeof(struct Geometry));
     if (!root || !g) {
         free(root);
@@ -18,11 +19,9 @@ struct Node *box_surface(struct Material* mat, float size, int slen, float spaci
         return NULL;
     }
 
+    make_box(mesh, size, size, size);
     g->material = mat;
-
-    make_box(&mesh, size, size, size);
-    globject_new(&mesh, &g->glObject);
-    mesh_free(&mesh);
+    g->mesh = mesh;
 
     node_init(root, NULL);
 
@@ -34,10 +33,11 @@ struct Node *box_surface(struct Material* mat, float size, int slen, float spaci
 
 struct Node *sphere_surface(struct Material* mat, float radius, int slen, float spacing) {
     struct Node *root;
-    struct Mesh mesh;
+    struct Mesh *mesh;
     struct Geometry *g;
 
     root = malloc(sizeof(struct Node));
+    mesh = calloc(1, sizeof(struct Mesh));
     g = malloc(sizeof(struct Geometry));
     if (!root || !g) {
         free(root);
@@ -46,10 +46,9 @@ struct Node *sphere_surface(struct Material* mat, float radius, int slen, float 
     }
 
     g->material = mat;
+    g->mesh = mesh;
 
-    make_icosphere(&mesh, radius, 2);
-    globject_new(&mesh, &g->glObject);
-    mesh_free(&mesh);
+    make_icosphere(mesh, radius, 2);
 
     node_init(root, NULL);
 

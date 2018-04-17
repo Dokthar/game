@@ -27,7 +27,6 @@ int main(int argc, char** argv) {
     struct Viewer* viewer = NULL;
     struct Scene scene;
     struct Mesh sphere = {0};
-    struct GLObject sphereGl = {0};
     struct SolidTextureMaterial solidtexture = {0};
     struct Geometry geom = {0};
     int ret = 1;
@@ -44,11 +43,10 @@ int main(int argc, char** argv) {
     } else if (!compute_sphere_uv(&sphere, texture[type].width, texture[type].height, texture[type].ratio, type)) {
         fprintf(stderr, "Error: failed to compute UVs\n");
     } else {
-        globject_new(&sphere, &sphereGl);
         solid_texture_material_init(&solidtexture);
         matparam_set_texture(&(solidtexture.texture), asset_manager_load_texture(texture[type].path));
         geom.material = &solidtexture.mat;
-        geom.glObject = sphereGl;
+        geom.mesh = &sphere;
 
         scene_init(&scene);
         viewer->viewport.scene = &scene;
@@ -70,7 +68,7 @@ int main(int argc, char** argv) {
         scene_free(&scene);
     }
 
-    globject_free(&sphereGl);
+    renderer_free_mesh(viewer->context.renderer, &sphere);
     mesh_free(&sphere);
     viewer_free(viewer);
 

@@ -14,6 +14,8 @@ struct Statistics {
     unsigned int nbTextureFrame;
     unsigned int nbTextureMemory;
 
+    unsigned int nbVboMemory;
+
     unsigned int nbFboSwitches;
     unsigned int nbFboFrame;
     unsigned int nbFboMemory;
